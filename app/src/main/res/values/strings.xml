@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SearchPlayGround</string>
+    <string name="enter_keywords">Enter Keywords</string>
+    <string name="search_no_results_title">No Results</string>
+    <string name="search_no_results_body">Need to try some other words</string>
+    <string name="search_no_internet_available_title">No Internet Available</string>
+    <string name="search_no_internet_available_body">Please check your wifi settings</string>
+    <string name="search_server_error_title">Unable to load</string>
+    <string name="search_server_error_body">Looks like we are busy, please try again later</string>
 </resources>
