@@ -1,5 +1,6 @@
 package com.am.searchplayground.model
 
+import com.am.searchplayground.network.Prediction
 import com.am.searchplayground.network.SearchApi
 import com.am.searchplayground.network.SearchApiContract
 import rx.android.schedulers.AndroidSchedulers
@@ -11,7 +12,7 @@ class SearchRepository(private val searchApi: SearchApi) {
 
     private val compositeSubscription: CompositeSubscription = CompositeSubscription()
 
-    fun fetchSuggestions(input: String, callBack: NetworkContract) {
+    fun fetchSuggestions(input: String, callBack: NetworkContract<List<Prediction>>) {
         callBack.showProgress()
         val subscription = searchApi.getSearchResults(keywords = input)
             .subscribeOn(Schedulers.io())

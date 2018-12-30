@@ -21,13 +21,13 @@ sealed class SearchFlow {
     class RecentSearchResults(val list: List<String>) : SearchFlow()
 }
 
-interface NetworkContract {
+interface NetworkContract<T> {
 
     fun showProgress()
 
     fun noResults()
 
-    fun loadResults(list: List<Prediction>)
+    fun loadResults(t: T)
 
     fun onError(t: Throwable?)
 }

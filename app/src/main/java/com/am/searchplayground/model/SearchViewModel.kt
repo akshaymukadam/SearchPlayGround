@@ -14,7 +14,7 @@ import rx.subscriptions.CompositeSubscription
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
 
-class SearchViewModel(application: Application) : AndroidViewModel(application), NetworkContract {
+class SearchViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var searchApi: SearchApi
     private val compositeSubscription = CompositeSubscription()
@@ -39,26 +39,41 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
                 .debounce(DEBOUNCE_TIME, TimeUnit.MILLISECONDS)
                 .filter { t -> t.length >= CHAR_LIMIT }
                 .subscribe {
-                    searchRepository.fetchSuggestions(input = it.toString(), callBack = this)
+                    fetchSuggestions(it)
                 }
         compositeSubscription.add(subscription)
     }
 
-    override fun showProgress() {
-        searchLiveData.postValue(SearchFlow.ProgressState)
+    private fun fetchSuggestions(it: CharSequence) {
+        searchRepository.fetchSuggestions(
+            input = it.toString(),
+            callBack = object : NetworkContract<List<Prediction>> {
+                override fun showProgress() {
+                    searchLiveData.postValue(SearchFlow.ProgressState)
+                }
+
+                override fun noResults() {
+                    searchLiveData.postValue(
+                        SearchFlow.EmptyState(
+                            getApplication<Application>().getString(R.string.search_no_results_title),
+                            getApplication<Application>().getString(R.string.search_no_results_body),
+                            R.drawable.search_no_internet
+                        )
+                    )
+                }
+
+                override fun loadResults(list: List<Prediction>) {
+                    handleData(list)
+                }
+
+                override fun onError(t: Throwable?) {
+                    handleOnError(t)
+                }
+
+            })
     }
 
-    override fun noResults() {
-        searchLiveData.postValue(
-            SearchFlow.EmptyState(
-                getApplication<Application>().getString(R.string.search_no_results_title),
-                getApplication<Application>().getString(R.string.search_no_results_body),
-                R.drawable.search_no_internet
-            )
-        )
-    }
-
-    override fun loadResults(list: List<Prediction>) {
+    private fun handleData(list: List<Prediction>) {
         if (!list.isNullOrEmpty()) {
             searchLiveData.postValue(SearchFlow.SearchResults(list))
         } else {
@@ -72,7 +87,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    override fun onError(t: Throwable?) {
+    private fun handleOnError(t: Throwable?) {
         if (t != null && t is UnknownHostException) {
             searchLiveData.postValue(
                 SearchFlow.ErrorState(
