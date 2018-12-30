@@ -7,4 +7,7 @@
     <string name="search_no_internet_available_body">Please check your wifi settings</string>
     <string name="search_server_error_title">Unable to load</string>
     <string name="search_server_error_body">Looks like we are busy, please try again later</string>
+    <string name="enter_your_keywords">Enter your keywords</string>
+    <string name="results_will_be_displayed_here">Results will be displayed here</string>
+    <string name="try_again">Try Again</string>
 </resources>
