@@ -2,7 +2,7 @@ package com.am.searchplayground.di
 
 import android.app.Application
 import android.content.Context
-import com.am.searchplayground.SEARCH_PLACES_KEY
+import com.am.searchplayground.SEARCH_PLACES_URL
 import com.am.searchplayground.network.SearchApi
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -47,7 +47,7 @@ class NetworkModule {
         val retrofit = Retrofit.Builder().addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
             .client(httpClient)
-            .baseUrl(SEARCH_PLACES_KEY)
+            .baseUrl(SEARCH_PLACES_URL)
         return retrofit.build()
     }
 
