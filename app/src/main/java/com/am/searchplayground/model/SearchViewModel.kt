@@ -22,11 +22,22 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
 
 
     val searchLiveData = MutableLiveData<SearchFlow>()
+
+    init {
+        searchLiveData.postValue(
+            SearchFlow.EmptyState(
+                getApplication<Application>().getString(R.string.enter_keywords),
+                getApplication<Application>().getString(R.string.results_will_be_displayed_here),
+                R.drawable.search_no_internet
+            )
+        )
+    }
+
     fun fetchSearchResults(keyWords: CharSequence) {
         val subscription: Subscription =
             Observable.just(keyWords)
-                .filter { t -> t.length >= CHAR_LIMIT }
                 .debounce(DEBOUNCE_TIME, TimeUnit.MILLISECONDS)
+                .filter { t -> t.length >= CHAR_LIMIT }
                 .subscribe {
                     searchRepository.fetchSuggestions(input = it.toString(), callBack = this)
                 }
@@ -42,7 +53,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
             SearchFlow.EmptyState(
                 getApplication<Application>().getString(R.string.search_no_results_title),
                 getApplication<Application>().getString(R.string.search_no_results_body),
-                0
+                R.drawable.search_no_internet
             )
         )
     }
@@ -55,7 +66,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
                 SearchFlow.EmptyState(
                     getApplication<Application>().getString(R.string.search_no_results_title),
                     getApplication<Application>().getString(R.string.search_no_results_body),
-                    0
+                    R.drawable.search_no_internet
                 )
             )
         }
@@ -67,7 +78,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
                 SearchFlow.ErrorState(
                     getApplication<Application>().getString(R.string.search_no_internet_available_title),
                     getApplication<Application>().getString(R.string.search_no_internet_available_body),
-                    0
+                    R.drawable.search_no_internet
                 )
             )
         } else {
@@ -75,7 +86,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application),
                 SearchFlow.ErrorState(
                     getApplication<Application>().getString(R.string.search_server_error_title),
                     getApplication<Application>().getString(R.string.search_server_error_body),
-                    0
+                    R.drawable.search_no_internet
                 )
             )
         }

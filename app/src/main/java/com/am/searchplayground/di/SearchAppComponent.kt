@@ -1,6 +1,6 @@
 package com.am.searchplayground.di
 
-import com.am.searchplayground.MainActivity
+import com.am.searchplayground.ui.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 
