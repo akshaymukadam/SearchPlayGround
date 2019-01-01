@@ -10,6 +10,6 @@ interface SearchApi {
     @GET("autocomplete/json")
     fun getSearchResults(@Query("input") keywords: String, @Query("key") key: String = SEARCH_PLACES_KEY): Single<SearchApiContract>
 
-    @GET("/textsearch/json")
-    fun getTextSearchResults(@Query("query") query: String, @Query("key") key: String = SEARCH_PLACES_KEY)
+    @GET("textsearch/json")
+    fun getTextSearchResults(@Query("query") query: String, @Query("key") key: String = SEARCH_PLACES_KEY):Single<SearchPlacesResponse>
 }
