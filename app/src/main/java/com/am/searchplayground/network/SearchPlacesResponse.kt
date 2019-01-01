@@ -8,13 +8,13 @@ data class SearchPlacesResponse(
     @SerializedName("next_page_token")
     val next_page_token: String,
     @SerializedName("results")
-    val results: List<Result>,
+    val results: List<SearchPlacesResult>,
     @SerializedName("status")
     val status: String
 )
 
 
-class Result(
+class SearchPlacesResult(
     @SerializedName("formatted_address")
     val formatted_address: String,
     @SerializedName("geometry")

@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.am.searchplayground.R
-import com.am.searchplayground.network.Prediction
+import com.am.searchplayground.network.SearchPlacesResult
 import kotlinx.android.synthetic.main.row_search_suggestions.view.*
 
 
-class SearchSuggestionsAdapter(private val list: MutableList<Prediction>) :
+class SearchSuggestionsAdapter(private val list: MutableList<SearchPlacesResult>) :
     RecyclerView.Adapter<SearchSuggestionsAdapter.SearchSuggestionHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, position: Int): SearchSuggestionHolder {
@@ -23,7 +23,7 @@ class SearchSuggestionsAdapter(private val list: MutableList<Prediction>) :
         holder.bind(list[position])
     }
 
-    fun updateList(results: List<Prediction>) {
+    fun updateList(results: List<SearchPlacesResult>) {
         list.addAll(results)
         notifyDataSetChanged()
 
@@ -36,9 +36,9 @@ class SearchSuggestionsAdapter(private val list: MutableList<Prediction>) :
 
 
     inner class SearchSuggestionHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(prediction: Prediction) {
-            itemView.txtTitle.text = prediction.structured_formatting.main_text
-            itemView.txtDescription.text = prediction.description
+        fun bind(results: SearchPlacesResult) {
+            itemView.txtTitle.text = results.name
+            itemView.txtDescription.text = results.formatted_address
         }
     }
 }

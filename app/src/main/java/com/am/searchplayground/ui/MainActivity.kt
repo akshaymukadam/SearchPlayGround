@@ -5,15 +5,16 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import com.am.searchplayground.R
 import com.am.searchplayground.SearchApp
 import com.am.searchplayground.model.SearchFlow
 import com.am.searchplayground.model.SearchViewModel
 import com.am.searchplayground.network.SearchApi
+import com.jakewharton.rxbinding.widget.RxTextView
 import kotlinx.android.synthetic.main.activity_main.*
+import rx.android.schedulers.AndroidSchedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -31,29 +32,17 @@ class MainActivity : AppCompatActivity() {
         searchSuggestionsAdapter = SearchSuggestionsAdapter(mutableListOf())
         rvSuggestions.layoutManager = LinearLayoutManager(this)
         rvSuggestions.adapter = searchSuggestionsAdapter
-        inputSearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
-                    searchSuggestionsAdapter.clear()
-                    txtOnBoardingBody.text = getString(R.string.enter_your_keywords)
-                    txtOnBoardingTitle.text = getString(R.string.results_will_be_displayed_here)
-                    updateViewVisibiltiy(groupOnBoarding, View.VISIBLE)
-                    updateViewVisibiltiy(progressBar, View.GONE)
-                    updateViewVisibiltiy(rvSuggestions, View.GONE)
-                    updateViewVisibiltiy(groupError, View.GONE)
-                }
+
+        RxTextView.textChanges(inputSearch)
+            .skip(1)
+            .debounce(3, TimeUnit.SECONDS)
+            .filter { t: CharSequence ->
+                t.trim().length > 3
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(keyWords: CharSequence?, start: Int, before: Int, count: Int) {
-                if (keyWords != null)
-                    searchViewModel.fetchSearchResults(keyWords)
-
-            }
-        })
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({ t: CharSequence? ->
+                if (t != null)
+                    searchViewModel.fetchSearchResults(t)
+            }, { t: Throwable? -> t?.printStackTrace() })
         searchViewModel.searchLiveData.observe(this,
             Observer<SearchFlow> { t ->
                 t?.let {

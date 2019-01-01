@@ -3,16 +3,11 @@ package com.am.searchplayground.model
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import com.am.searchplayground.CHAR_LIMIT
-import com.am.searchplayground.DEBOUNCE_TIME
 import com.am.searchplayground.R
-import com.am.searchplayground.network.Prediction
 import com.am.searchplayground.network.SearchApi
-import rx.Observable
-import rx.Subscription
+import com.am.searchplayground.network.SearchPlacesResult
 import rx.subscriptions.CompositeSubscription
 import java.net.UnknownHostException
-import java.util.concurrent.TimeUnit
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -34,20 +29,13 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun fetchSearchResults(keyWords: CharSequence) {
-        val subscription: Subscription =
-            Observable.just(keyWords)
-                .debounce(DEBOUNCE_TIME, TimeUnit.MILLISECONDS)
-                .filter { t -> t.length >= CHAR_LIMIT }
-                .subscribe {
-                    fetchSuggestions(it)
-                }
-        compositeSubscription.add(subscription)
+        fetchSuggestions(keyWords)
     }
 
     private fun fetchSuggestions(it: CharSequence) {
         searchRepository.fetchSuggestions(
-            input = it.toString(),
-            callBack = object : NetworkContract<List<Prediction>> {
+            input = it.replace(Regex("\\s+"), "+"),
+            callBack = object : NetworkContract<List<SearchPlacesResult>> {
                 override fun showProgress() {
                     searchLiveData.postValue(SearchFlow.ProgressState)
                 }
@@ -62,8 +50,8 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 }
 
-                override fun loadResults(list: List<Prediction>) {
-                    handleData(list)
+                override fun loadResults(data: List<SearchPlacesResult>) {
+                    handleData(data)
                 }
 
                 override fun onError(t: Throwable?) {
@@ -73,7 +61,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             })
     }
 
-    private fun handleData(list: List<Prediction>) {
+    private fun handleData(list: List<SearchPlacesResult>) {
         if (!list.isNullOrEmpty()) {
             searchLiveData.postValue(SearchFlow.SearchResults(list))
         } else {

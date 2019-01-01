@@ -1,6 +1,6 @@
 package com.am.searchplayground.model
 
-import com.am.searchplayground.network.Prediction
+import com.am.searchplayground.network.SearchPlacesResult
 
 sealed class SearchFlow {
 
@@ -16,7 +16,7 @@ sealed class SearchFlow {
     class ErrorState(val txtTitle: String, val txtBody: String, val imageRes: Int) : SearchFlow()
 
 
-    class SearchResults(val results: List<Prediction>) : SearchFlow()
+    class SearchResults(val results: List<SearchPlacesResult>) : SearchFlow()
 
     class RecentSearchResults(val list: List<String>) : SearchFlow()
 }
@@ -27,7 +27,7 @@ interface NetworkContract<T> {
 
     fun noResults()
 
-    fun loadResults(t: T)
+    fun loadResults(data: T)
 
     fun onError(t: Throwable?)
 }
