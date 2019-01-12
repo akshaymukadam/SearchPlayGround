@@ -1,5 +1,6 @@
 package com.am.searchplayground.network
 
+import com.am.searchplayground.ROW_ITEM
 import com.google.gson.annotations.SerializedName
 
 data class SearchPlacesResponse(
@@ -15,32 +16,33 @@ data class SearchPlacesResponse(
 
 
 class SearchPlacesResult(
+    val rowType: Int = ROW_ITEM,
     @SerializedName("formatted_address")
-    val formatted_address: String,
+    val formatted_address: String = "",
     @SerializedName("geometry")
-    val geometry: Geometry,
+    val geometry: Geometry? = null,
     @SerializedName("icon")
-    val icon: String,
+    val icon: String = "",
     @SerializedName("id")
-    val id: String,
+    val id: String = "",
     @SerializedName("name")
-    val name: String,
+    val name: String = "",
     @SerializedName("opening_hours")
-    val opening_hours: OpeningHours,
+    val opening_hours: OpeningHours? = null,
     @SerializedName("photos")
-    val photos: List<Photo>,
+    val photos: List<Photo>? = null,
     @SerializedName("place_id")
-    val place_id: String,
+    val place_id: String = "",
     @SerializedName("plus_code")
-    val plus_code: PlusCode,
+    val plus_code: PlusCode? = null,
     @SerializedName("price_level")
-    val price_level: Int,
+    val price_level: Int = 0,
     @SerializedName("rating")
-    val rating: Double,
+    val rating: Double? = null,
     @SerializedName("reference")
-    val reference: String,
+    val reference: String = "",
     @SerializedName("types")
-    val types: List<String>
+    val types: List<String>? = null
 )
 
 data class Photo(
@@ -100,3 +102,11 @@ data class Viewport(
     @SerializedName("southwest")
     val southwest: Southwest
 )
+
+sealed class SearchResultsRowType {
+    object SearchResultsItem : SearchResultsRowType()
+
+    object SearchResultsProgressItem : SearchResultsRowType()
+
+    object SearchResultsErrorItem : SearchResultsRowType()
+}

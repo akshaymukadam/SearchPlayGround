@@ -11,5 +11,6 @@ interface SearchApi {
     fun getSearchResults(@Query("input") keywords: String, @Query("key") key: String = SEARCH_PLACES_KEY): Single<SearchApiContract>
 
     @GET("textsearch/json")
-    fun getTextSearchResults(@Query("query") query: String, @Query("key") key: String = SEARCH_PLACES_KEY):Single<SearchPlacesResponse>
+    fun getTextSearchResults(@Query("query") query: String, @Query("next_page_token") nextPageToken:String?=null,
+                             @Query("key") key: String = SEARCH_PLACES_KEY):Single<SearchPlacesResponse>
 }

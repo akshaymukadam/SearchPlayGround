@@ -10,4 +10,6 @@
     <string name="enter_your_keywords">Enter your keywords</string>
     <string name="results_will_be_displayed_here">Results will be displayed here</string>
     <string name="try_again">Try Again</string>
+    <string name="retry">Retry</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>
