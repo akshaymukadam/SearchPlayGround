@@ -59,31 +59,30 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun observeSearchSuggestion() {
-		searchViewModel.searchLiveData.observe(this,
-			Observer<SearchFlow> { t ->
-				t?.let {
-					when (it) {
-						is SearchFlow.ProgressState -> {
-							updateProgressState()
-						}
-						is SearchFlow.ErrorState -> {
-							updateErrorStates(it)
-						}
-						is SearchFlow.EmptyState -> {
-							searchSuggestionsAdapter.removePaginationErrorProgress()
+		searchViewModel.resultsLiveData.observe(this, Observer { t: SearchFlow? ->
+			t?.let {
+				when (it) {
+					is SearchFlow.ProgressState -> {
+						updateProgressState()
+					}
+					is SearchFlow.ErrorState -> {
+						updateErrorStates(it)
+					}
+					is SearchFlow.EmptyState -> {
+						searchSuggestionsAdapter.removePaginationErrorProgress()
 
-							updateEmptyState(it)
-						}
-						is SearchFlow.SearchResults -> {
-							searchSuggestionsAdapter.removePaginationErrorProgress()
-							updateSearchResults(it)
-						}
-						is SearchFlow.RecentSearchResults -> {
-							updateRecentSearchResults()
-						}
+						updateEmptyState(it)
+					}
+					is SearchFlow.SearchResults -> {
+						searchSuggestionsAdapter.removePaginationErrorProgress()
+						updateSearchResults(it)
+					}
+					is SearchFlow.RecentSearchResults -> {
+						updateRecentSearchResults()
 					}
 				}
-			})
+			}
+		})
 	}
 
 	private fun removeScrollListener() {
@@ -115,9 +114,9 @@ class MainActivity : AppCompatActivity() {
 			searchSuggestionsAdapter.isAdapterEmpty(),
 			paginationView = {},
 			fullScreenView = {
-				imgOnBoarding.setImageResource(it.imageRes)
-				txtOnBoardingBody.text = it.txtBody
-				txtOnBoardingTitle.text = it.txtTitle
+				imgOnBoarding.setImageResource(R.drawable.search_no_internet)
+				txtOnBoardingBody.text = getString(R.string.enter_keywords)
+				txtOnBoardingTitle.text = getString(R.string.results_will_be_displayed_here)
 				updateViewVisibilty(groupOnBoarding, View.VISIBLE)
 				updateViewVisibilty(progressBar, View.GONE)
 				updateViewVisibilty(rvSuggestions, View.GONE)
@@ -129,9 +128,9 @@ class MainActivity : AppCompatActivity() {
 		searchViewModel.updateViewStates(
 			isListEmpty = searchSuggestionsAdapter.isAdapterEmpty(),
 			paginationView = { searchSuggestionsAdapter.showPaginationError() }, fullScreenView = {
-				txtErrorTitle.text = it.txtTitle
-				txtErrorBody.text = it.txtBody
-				imgError.setImageResource(it.imageRes)
+				txtErrorTitle.text = getString(R.string.search_no_results_title)
+				txtErrorBody.text = getString(R.string.search_no_results_body)
+				imgError.setImageResource(R.drawable.search_no_internet)
 				updateViewVisibilty(groupOnBoarding, View.GONE)
 				updateViewVisibilty(progressBar, View.GONE)
 				updateViewVisibilty(rvSuggestions, View.GONE)
